@@ -1,8 +1,6 @@
 # syncra
 
-🐍 Syncra provides async harmony.
-
-
+?? Syncra provides async harmony. See the examples below to learn how to create functions and classes that work in both synchronous and asynchronous contexts.
 
 ## Features
 
