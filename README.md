@@ -18,7 +18,7 @@ pip install syncra
 
 ## Usage
 
-### syncra_factory
+### sync_async_factory
 
 _Create a function that can be called synchronously or asynchronously:_
 
