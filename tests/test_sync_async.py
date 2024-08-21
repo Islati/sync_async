@@ -1,7 +1,7 @@
 import pytest
 import asyncio
 
-from sync_async import sync_async_factory, sync_compat, AsyncObj
+from syncra import sync_async_factory, sync_compat, AsyncObj
 
 
 @sync_compat

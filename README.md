@@ -1,7 +1,8 @@
-# sync_async
+# syncra
 
-`sync_async` is a lib that allows for optional asynchronous behavior in method calls. It provides the flexibility to
-create methods that can be used both synchronously and asynchronously.
+🐍 Syncra provides async harmony.
+
+
 
 ## Features
 
@@ -14,18 +15,18 @@ create methods that can be used both synchronously and asynchronously.
 Install via pip:
 
 ```bash
-pip install sync_async
+pip install syncra
 ```
 
 ## Usage
 
-### sync_async_factory
+### syncra_factory
 
 _Create a function that can be called synchronously or asynchronously:_
 
 ```python
-from sync_async import sync_async_factory
-
+from syncra import sync_async_factory
+import asyncio
 
 def sync_func(x):
     return x * 2
@@ -36,13 +37,14 @@ async def async_func(x):
     return x * 2
 
 
-sync_async = sync_async_factory(sync_func, async_func)
+syncra = sync_async_factory(sync_func, async_func)
 
 # Usage:
-result = sync_async(5)  # Synchronous
+result = syncra(5)  # Synchronous
 
-async def main(): # Asynchronous
-    result = await sync_async(5)
+
+async def main():  # Asynchronous
+    result = await syncra(5)
 ```
 
 ### `@sync_compat` Decorator
@@ -50,17 +52,22 @@ async def main(): # Asynchronous
 Make an async function compatible with sync calls
 
 ```python
-from sync_async import sync_compat
+from syncra import sync_compat
+import asyncio
+
 
 @sync_compat
 async def async_function(x):
     await asyncio.sleep(0.1)
     return x * 2
 
+
 # Usage:
-result = async_function(5)     # Synchronous
-async def main(): # Asynchronous
-    result = await sync_async(5)
+result = async_function(5)  # Synchronous
+
+
+async def main():  # Asynchronous
+    result = await async_function(5)
 
 ```
 
@@ -70,11 +77,13 @@ async def main(): # Asynchronous
 Create a class that can be initialized asynchronously:
 
 ```python
-from sync_async import AsyncObj
+from syncra import AsyncObj
+
 
 class MyAsyncClass(AsyncObj):
     async def __ainit__(self, x):
         self.x = x
+
 
 # Usage:
 async def main():

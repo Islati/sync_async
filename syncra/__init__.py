@@ -9,10 +9,10 @@ Functions:
     sync_async: A decorator to make a method optionally awaitable.
 """
 
-import asyncio
 import traceback
-from functools import wraps
 from typing import Callable, Any, TypeVar, Awaitable, Union
+import asyncio
+from functools import wraps
 
 R = TypeVar('R')
 
@@ -51,8 +51,7 @@ class AsyncObj:
         return "[initialization done and successful]"
 
 
-import asyncio
-from functools import wraps
+
 
 
 def sync_async_factory(sync_func: Callable[..., R], async_func: Callable[..., Awaitable[R]]) -> Callable[
