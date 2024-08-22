@@ -16,12 +16,14 @@ from functools import wraps
 
 R = TypeVar('R')
 
+
 def is_running_in_async():
     try:
         loop = asyncio.get_running_loop()
         return loop.is_running()
     except RuntimeError:
         return False
+
 
 class AsyncObj:
     def __init__(self, *args, **kwargs):
@@ -55,9 +57,6 @@ class AsyncObj:
         if not self.async_initialized:
             return "[initialization pending]"
         return "[initialization done and successful]"
-
-
-
 
 
 def sync_async_factory(sync_func: Callable[..., R], async_func: Callable[..., Awaitable[R]]) -> Callable[
@@ -121,7 +120,7 @@ def sync_async_factory(sync_func: Callable[..., R], async_func: Callable[..., Aw
         Returns:
             Union[R, Awaitable[R]]: The result of the synchronous or asynchronous function call.
         """
-        if asyncio.get_event_loop().is_running():
+        if is_running_in_async():
             return SyncAsync(*args, **kwargs)
         else:
             return sync_func(*args, **kwargs)
@@ -144,18 +143,11 @@ def sync_compat(func: Callable[..., Awaitable[R]]) -> Callable[..., Union[R, Awa
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Union[Any, Awaitable[Any]]:
-        try:
-            # Check if we're in an async context
-            loop = asyncio.get_running_loop()
-            if loop.is_running():
-                # We're already in an async context, so create a task to run the function asynchronously
-                return asyncio.create_task(func(*args, **kwargs))
-        except RuntimeError as e:
-            stack_trace = traceback.format_exc()
-            if 'no running event loop' not in stack_trace:
-                raise e
-            # No running event loop, so create a new one to run the async function
+        if not is_running_in_async():
             return asyncio.run(func(*args, **kwargs))
+
+        else:
+            return asyncio.create_task(func(*args, **kwargs))
 
     return wrapper
 
