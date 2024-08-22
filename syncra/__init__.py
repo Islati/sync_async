@@ -16,12 +16,14 @@ from functools import wraps
 
 R = TypeVar('R')
 
+
 def is_running_in_async():
     try:
         loop = asyncio.get_running_loop()
         return loop.is_running()
     except RuntimeError:
         return False
+
 
 class AsyncObj:
     def __init__(self, *args, **kwargs):
@@ -75,12 +77,14 @@ from functools import wraps
 
 R = TypeVar('R')
 
+
 def is_running_in_async():
     try:
         loop = asyncio.get_running_loop()
         return loop.is_running()
     except RuntimeError:
         return False
+
 
 class AsyncObj:
     def __init__(self, *args, **kwargs):
@@ -115,31 +119,40 @@ class AsyncObj:
             return "[initialization pending]"
         return "[initialization done and successful]"
 
+
 def wrap_classmethod_sync(func):
     @wraps(func)
     def wrapper(cls, *args, **kwargs):
         return func(cls, *args, **kwargs)
+
     return wrapper
+
 
 def wrap_classmethod_async(func):
     @wraps(func)
     async def wrapper(cls, *args, **kwargs):
         return await func(cls, *args, **kwargs)
+
     return wrapper
 
 
-def sync_async_factory(sync_func: Callable[..., R], async_func: Callable[..., Awaitable[R]]) -> Callable[..., Union[R, Awaitable[R]]]:
+def sync_async_factory(sync_func: Callable[..., R], async_func: Callable[..., Awaitable[R]]) -> Callable[
+    ..., Union[R, Awaitable[R]]]:
     """
     Creates a callable object that can be used both synchronously and asynchronously.
     Supports instance methods, class methods, and static methods.
     """
+
     @wraps(sync_func)
     def wrapper(cls_or_self: Any, *args: Any, **kwargs: Any) -> Union[R, Awaitable[R]]:
         if is_running_in_async():
             return async_func(cls_or_self, *args, **kwargs)
         else:
             return sync_func(cls_or_self, *args, **kwargs)
+
     return wrapper
+
+
 def is_classmethod(func: Callable) -> bool:
     """
     Helper function to determine if a function is a classmethod.
@@ -151,6 +164,7 @@ def is_classmethod(func: Callable) -> bool:
         bool: True if the function is a classmethod, False otherwise.
     """
     return hasattr(func, '__self__') and isinstance(func.__self__, type)
+
 
 def sync_compat(func: Callable[..., Awaitable[R]]) -> Callable[..., Union[R, Awaitable[R]]]:
     """
@@ -172,6 +186,7 @@ def sync_compat(func: Callable[..., Awaitable[R]]) -> Callable[..., Union[R, Awa
                 return asyncio.run(func(cls, *args, **kwargs))
             else:
                 return asyncio.create_task(func(cls, *args, **kwargs))
+
         return classmethod_wrapper
 
     @wraps(func)
@@ -182,6 +197,7 @@ def sync_compat(func: Callable[..., Awaitable[R]]) -> Callable[..., Union[R, Awa
             return asyncio.create_task(func(*args, **kwargs))
 
     return wrapper
+
 
 __all__ = ["sync_async_factory", "sync_compat", "AsyncObj", "is_running_in_async"]
 
@@ -198,6 +214,7 @@ def is_classmethod(func: Callable) -> bool:
     """
     return hasattr(func, '__self__') and isinstance(func.__self__, type)
 
+
 def sync_compat(func: Callable[..., Awaitable[R]]) -> Callable[..., Union[R, Awaitable[R]]]:
     """
     A decorator to make a method optionally awaitable, supporting both instance and class methods.
@@ -218,6 +235,7 @@ def sync_compat(func: Callable[..., Awaitable[R]]) -> Callable[..., Union[R, Awa
                 return asyncio.run(func(cls, *args, **kwargs))
             else:
                 return asyncio.create_task(func(cls, *args, **kwargs))
+
         return classmethod_wrapper
 
     @wraps(func)
@@ -228,5 +246,6 @@ def sync_compat(func: Callable[..., Awaitable[R]]) -> Callable[..., Union[R, Awa
             return asyncio.create_task(func(*args, **kwargs))
 
     return wrapper
+
 
 __all__ = ["sync_async_factory", "sync_compat", "AsyncObj", "is_running_in_async"]
