@@ -1,8 +1,9 @@
+from functools import partial
+
 import pytest
 import asyncio
 
 from syncra import sync_async_factory, sync_compat, AsyncObj, is_running_in_async
-
 
 
 @sync_compat
@@ -278,3 +279,31 @@ async def test_is_running_in_async_async_context():
 
 def test_is_running_in_async_sync_context():
     assert is_running_in_async() is False
+
+
+class MyClass:
+    @classmethod
+    def sync_class_method(cls, x):
+        return x * 2
+
+    @classmethod
+    async def async_class_method(cls, x):
+        await asyncio.sleep(0.1)
+        return x * 2
+
+
+MyClass.combined_class_method = sync_async_factory(
+    lambda x: MyClass.sync_class_method(x),
+    lambda x: MyClass.async_class_method(x)
+)
+
+
+# Test Functions
+def test_class_method_sync_combined_class_methods():
+    result = MyClass.combined_class_method(5)
+    assert result == 10
+
+@pytest.mark.asyncio
+async def test_class_method_async_combined_class_methods():
+    result = await MyClass.combined_class_method(5)
+    assert result == 10
