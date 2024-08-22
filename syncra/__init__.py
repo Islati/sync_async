@@ -16,6 +16,12 @@ from functools import wraps
 
 R = TypeVar('R')
 
+def is_running_in_async():
+    try:
+        loop = asyncio.get_running_loop()
+        return loop.is_running()
+    except RuntimeError:
+        return False
 
 class AsyncObj:
     def __init__(self, *args, **kwargs):
@@ -154,4 +160,4 @@ def sync_compat(func: Callable[..., Awaitable[R]]) -> Callable[..., Union[R, Awa
     return wrapper
 
 
-__all__ = ["sync_async_factory", "sync_compat", "AsyncObj"]
+__all__ = ["sync_async_factory", "sync_compat", "AsyncObj", "is_running_in_async"]

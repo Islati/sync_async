@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "syncra"
-version = "1.0.0"
+version = "1.0.1"
 description = "A utility for creating synchronous and asynchronous compatible methods."
 readme = "README.md"
 requires-python = ">=3.6"
