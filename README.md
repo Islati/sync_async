@@ -1,6 +1,8 @@
 # syncra
 
-?? Syncra provides async harmony. See the examples below to learn how to create functions and classes that work in both synchronous and asynchronous contexts.
+Easy tool enabling async & sync calls on the same method with Python.
+
+Designed when migrating code, to allow for gradual transition to async or interop with sync codebase aswell.
 
 ## Features
 
